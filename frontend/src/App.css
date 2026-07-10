@@ -1,0 +1,350 @@
+/* #region LAYOUT GERAL E NAVEGAÇÃO */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.nav-menu {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav-link {
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--primary-color);
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary-hover);
+}
+/* #endregion LAYOUT GERAL E NAVEGAÇÃO */
+
+
+/* #region ESTILOS DO CABEÇALHO DA PÁGINA */
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-header h2 {
+  margin: 0;
+}
+
+.form-header .btn-toggle {
+  margin-bottom: 0;
+  width: auto;
+}
+
+/* Responsividade para celular */
+@media (max-width: 768px) {
+  .form-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .form-header .btn-toggle {
+    width: 100%;
+  }
+}
+/* #endregion ESTILOS DO CABEÇALHO DA PÁGINA */
+
+
+/* #region ESTILOS DO FORMULÁRIO */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background-color: var(--bg-color);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  border: 1px solid var(--border-color);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dynamic-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.dynamic-form-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.btn-close {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.2rem 0.6rem;
+  font-weight: bold;
+}
+
+.btn-close:hover {
+  background-color: var(--border-color);
+}
+
+.dynamic-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.btn-toggle {
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.btn-submit {
+  width: 100%;
+  margin-top: 1rem;
+  font-size: 1.1rem;
+  padding: 0.8rem;
+}
+/* #endregion ESTILOS DO FORMULÁRIO */
+
+
+/* #region ESTILOS DOS CARDS (Pessoas e Transações) */
+.card {
+  border: 1px solid var(--border-color);
+  padding: 1.5rem;
+  border-radius: 12px;
+  background-color: var(--input-bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  box-sizing: border-box;
+  min-height: 280px;
+}
+
+.card-details {
+  width: 100%;
+}
+
+.card p {
+  margin: 0.4rem 0;
+}
+
+.card button {
+  margin-top: auto;
+  width: 100%;
+}
+
+.card-totals {
+  margin: 12px 0;
+  font-size: 0.95rem;
+}
+
+.card-totals p {
+  margin: 2px 0;
+}
+
+.card-saldo {
+  font-size: 1.1rem;
+}
+
+.card-saldo-value {
+  margin-left: 5px;
+}
+
+.card-valor {
+  font-weight: bold;
+}
+
+.card-footer-text {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+/* #endregion ESTILOS DOS CARDS (Pessoas e Transações) */
+
+
+/* #region UTILITÁRIOS GERAIS */
+.text-success {
+  color: #2ecc71;
+}
+
+.text-danger {
+  color: #e74c3c;
+}
+
+.text-capitalize {
+  text-transform: capitalize;
+}
+/* #endregion UTILITÁRIOS GERAIS */
+
+
+/* #region ESTILOS DO BALANÇO GERAL */
+.card-geral {
+  border: 1px solid var(--border-color);
+  padding: 2.5rem;
+  border-radius: 12px;
+  background-color: var(--input-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-geral h3 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-size: 1.8rem;
+}
+
+.card-geral-details {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.card-geral-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background-color: var(--bg-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.card-geral-item span {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.card-geral-item strong {
+  font-size: 1.5rem;
+}
+
+.card-geral-item.highlight-saldo {
+  border: 2px solid var(--primary-color);
+  background-color: var(--bg-color);
+  transform: scale(1.05);
+}
+
+.card-geral-item.highlight-saldo strong {
+  font-size: 1.8rem;
+}
+/* #endregion ESTILOS DO BALANÇO GERAL */
+
+
+/* #region LISTAS, PAGINAÇÃO E LAYOUT PRINCIPAL */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 2rem;
+}
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-footer {
+  margin-top: 3rem;
+}
+
+.list-grid-1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.list-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+  .list-grid-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .list-grid-1, .list-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-geral-details {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.pagination-container span {
+  font-weight: 500;
+}
+
+.btn-pagination {
+  padding: 0.4rem 0.8rem;
+  width: auto;
+}
+
+.btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* #endregion LISTAS, PAGINAÇÃO E LAYOUT PRINCIPAL */
