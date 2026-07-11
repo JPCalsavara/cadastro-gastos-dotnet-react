@@ -14,49 +14,41 @@ export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }:
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [tipo, setTipo] = useState('');
-  const [pagadorId, setPagadorId] = useState('');
-  const [recebedorId, setRecebedorId] = useState('');
+  const [pessoaId, setPessoaId] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    // Regra de Negócio: A pessoa não pode enviar transações para ela mesma
-    if (pagadorId === recebedorId) {
-      alert('Erro: Uma pessoa não pode enviar uma transação para si mesma.');
-      return;
-    }
-
-    const pagador = pessoas.find(p => p.id === parseInt(pagadorId));
-    const recebedor = pessoas.find(p => p.id === parseInt(recebedorId));
+    const pessoa = pessoas.find(p => p.id === parseInt(pessoaId));
     const valorNum = parseFloat(valor);
 
     // Regra de Negócio: Menores de 18 anos só podem cadastrar despesas
     if (tipo === 'receita') {
-      if ((pagador && pagador.idade < 18) || (recebedor && recebedor.idade < 18)) {
+      if (pessoa && pessoa.idade < 18) {
         alert('Erro: Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.');
         return;
       }
     }
 
-    // Regra de Negócio: O pagador não pode ficar com saldo negativo
+    // Regra de Negócio: O usuário não pode ficar com saldo negativo
     const calculaSaldo = (id: number) => {
-      const pessoa = pessoas.find(p => p.id === id);
-      const saldoInicial = pessoa ? pessoa.saldo : 0;
+      const p = pessoas.find(p => p.id === id);
+      const saldoInicial = p ? p.saldo : 0;
       
       const receitas = transacoes
-        .filter(t => t.recebedorId === id)
+        .filter(t => t.pessoaId === id && t.tipo === 'receita')
         .reduce((acc, curr) => acc + curr.valor, 0);
       const despesas = transacoes
-        .filter(t => t.pagadorId === id)
+        .filter(t => t.pessoaId === id && t.tipo === 'despesa')
         .reduce((acc, curr) => acc + curr.valor, 0);
       
       return saldoInicial + receitas - despesas;
     };
 
-    const saldoPagador = calculaSaldo(parseInt(pagadorId));
+    const saldoAtual = calculaSaldo(parseInt(pessoaId));
     
-    if (saldoPagador - valorNum < 0) {
-      alert('Erro: Saldo insuficiente. A transação deixaria o saldo do pagador negativo.');
+    if (tipo === 'despesa' && saldoAtual - valorNum < 0) {
+      alert('Erro: Saldo insuficiente. A transação deixaria o saldo negativo.');
       return;
     }
     
@@ -65,16 +57,14 @@ export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }:
         descricao,
         valor: valorNum,
         tipo,
-        pagadorId: parseInt(pagadorId),
-        recebedorId: parseInt(recebedorId)
+        pessoaId: parseInt(pessoaId)
       });
 
       onAdd(transacaoCriada);
       setDescricao('');
       setValor('');
       setTipo('');
-      setPagadorId('');
-      setRecebedorId('');
+      setPessoaId('');
       setIsOpen(false);
       // Recarrega dados do servidor para sincronizar saldos
       await onRefetch();
@@ -133,22 +123,12 @@ export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }:
                 </select>
               </div>
               <div className="form-group">
-                <label>Pagador:</label>
-                <select value={pagadorId} onChange={(e) => setPagadorId(e.target.value)} required>
+                <label>Pessoa:</label>
+                <select value={pessoaId} onChange={(e) => setPessoaId(e.target.value)} required>
                   <option value="">Selecione a pessoa...</option>
                   {pessoas && pessoas.map(p => (
                     <option key={p.id} value={p.id}>{p.nome}</option>
                   ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Recebedor:</label>
-                <select value={recebedorId} onChange={(e) => setRecebedorId(e.target.value)} required>
-                  <option value="">Selecione a pessoa...</option>
-                  {pessoas && pessoas.map(p => (
-                    <option key={p.id} value={p.id}>{p.nome}</option>
-                  ))} 
                 </select>
               </div>
               

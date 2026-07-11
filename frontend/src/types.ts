@@ -7,10 +7,8 @@ export interface Pessoa{
 
 export interface Transacao{
   id: number;
-  recebedorId: number;
-  recebedorNome?: string;
-  pagadorId: number;
-  pagadorNome?: string;
+  pessoaId: number;
+  pessoa?: Pessoa;
   descricao: string;
   valor: number;
   tipo: TipoTransacao;

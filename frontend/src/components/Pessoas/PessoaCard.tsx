@@ -9,11 +9,11 @@ interface PessoaCardProps {
 export default function PessoaCard({ pessoa, transacoes, onDelete }: PessoaCardProps) {
   
   const totalReceitas = transacoes
-    .filter(t => t.recebedorId === pessoa.id)
+    .filter(t => t.pessoaId === pessoa.id && t.tipo === 'receita')
     .reduce((acc, curr) => acc + curr.valor, 0);
 
   const totalDespesas = transacoes
-    .filter(t => t.pagadorId === pessoa.id)
+    .filter(t => t.pessoaId === pessoa.id && t.tipo === 'despesa')
     .reduce((acc, curr) => acc + curr.valor, 0);
 
   const saldoAtual = pessoa.saldo + totalReceitas - totalDespesas;

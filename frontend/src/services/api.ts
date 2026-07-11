@@ -42,8 +42,7 @@ export async function criarTransacao(payload: {
   descricao: string;
   valor: number;
   tipo: string;
-  pagadorId: number;
-  recebedorId: number;
+  pessoaId: number;
 }) {
   const response = await fetch(`${API_URL}/api/transacoes`, {
     method: 'POST',

@@ -20,7 +20,7 @@ export default function TransacaoCard({ transacao }: TransacaoCardProps) {
         </p>
         <p className="text-capitalize"><strong>Tipo:</strong> {transacao.tipo}</p>
         <p className="card-footer-text">
-          <strong>De:</strong> {transacao.pagadorNome} (ID: {transacao.pagadorId}) | <strong>Para:</strong> {transacao.recebedorNome} (ID: {transacao.recebedorId})
+          <strong>Pessoa:</strong> {transacao.pessoa?.nome || 'Desconhecida'} (ID: {transacao.pessoaId})
         </p>
       </div>
     </div>
