@@ -20,15 +20,9 @@ public class Transacao
     [Required]
     public string Tipo { get; set; } = string.Empty; // "receita" ou "despesa"
 
-    // Relacionamento com Pagador
-    public int PagadorId { get; set; }
+    // Relacionamento com Pessoa
+    public int PessoaId { get; set; }
     
-    [ForeignKey("PagadorId")]
-    public virtual Pessoa Pagador { get; set; } = null!;
-
-    // Relacionamento com Recebedor
-    public int RecebedorId { get; set; }
-    
-    [ForeignKey("RecebedorId")]
-    public virtual Pessoa Recebedor { get; set; } = null!;
+    [ForeignKey("PessoaId")]
+    public virtual Pessoa Pessoa { get; set; } = null!;
 }

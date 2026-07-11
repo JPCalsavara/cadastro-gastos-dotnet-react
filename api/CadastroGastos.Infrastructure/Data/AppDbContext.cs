@@ -17,18 +17,11 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Configuração do Delete em Cascata
-        // Se uma pessoa for deletada, as transações onde ela é Pagadora serão deletadas
+        // Se uma pessoa for deletada, as transações dela serão deletadas
         modelBuilder.Entity<Transacao>()
-            .HasOne(t => t.Pagador)
-            .WithMany(p => p.TransacoesPagas)
-            .HasForeignKey(t => t.PagadorId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Se uma pessoa for deletada, as transações onde ela é Recebedora serão deletadas
-        modelBuilder.Entity<Transacao>()
-            .HasOne(t => t.Recebedor)
-            .WithMany(p => p.TransacoesRecebidas)
-            .HasForeignKey(t => t.RecebedorId)
+            .HasOne(t => t.Pessoa)
+            .WithMany(p => p.Transacoes)
+            .HasForeignKey(t => t.PessoaId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

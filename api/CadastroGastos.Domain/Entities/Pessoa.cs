@@ -20,10 +20,7 @@ public class Pessoa
     // Saldo inicial do usuário
     public decimal Saldo { get; set; } = 0;
 
-    // Propriedades de navegação (transações onde é pagador ou recebedor)
-    [InverseProperty("Pagador")]
-    public virtual ICollection<Transacao> TransacoesPagas { get; set; } = new List<Transacao>();
-
-    [InverseProperty("Recebedor")]
-    public virtual ICollection<Transacao> TransacoesRecebidas { get; set; } = new List<Transacao>();
+    // Propriedade de navegação (transações do usuário)
+    [InverseProperty("Pessoa")]
+    public virtual ICollection<Transacao> Transacoes { get; set; } = new List<Transacao>();
 }

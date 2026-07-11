@@ -21,27 +21,23 @@ public class TransacaoService : ITransacaoService
 
     public async Task<Transacao> CriarAsync(Transacao transacao)
     {
-        if (transacao.PagadorId == transacao.RecebedorId)
-            throw new InvalidOperationException("Uma pessoa não pode enviar uma transação para si mesma.");
+        var pessoa = await _pessoaRepository.GetByIdAsync(transacao.PessoaId);
 
-        var pagador = await _pessoaRepository.GetByIdAsync(transacao.PagadorId);
-        var recebedor = await _pessoaRepository.GetByIdAsync(transacao.RecebedorId);
+        if (pessoa == null)
+            throw new ArgumentException("Pessoa não encontrada.");
 
-        if (pagador == null || recebedor == null)
-            throw new ArgumentException("Pagador ou Recebedor não encontrado.");
-
-        if (transacao.Tipo.ToLower() == "receita" && (pagador.Idade < 18 || recebedor.Idade < 18))
+        if (transacao.Tipo.ToLower() == "receita" && pessoa.Idade < 18)
         {
             throw new InvalidOperationException("Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.");
         }
 
-        var receitasPagador = await _transacaoRepository.GetTotalReceitasByPessoaAsync(pagador.Id);
-        var despesasPagador = await _transacaoRepository.GetTotalDespesasByPessoaAsync(pagador.Id);
-        var saldoAtualPagador = pagador.Saldo + receitasPagador - despesasPagador;
+        var receitas = await _transacaoRepository.GetTotalReceitasByPessoaAsync(pessoa.Id);
+        var despesas = await _transacaoRepository.GetTotalDespesasByPessoaAsync(pessoa.Id);
+        var saldoAtual = pessoa.Saldo + receitas - despesas;
 
-        if (saldoAtualPagador - transacao.Valor < 0)
+        if (transacao.Tipo.ToLower() == "despesa" && saldoAtual - transacao.Valor < 0)
         {
-            throw new InvalidOperationException("Saldo insuficiente. A transação deixaria o saldo do pagador negativo.");
+            throw new InvalidOperationException("Saldo insuficiente. A transação deixaria o saldo negativo.");
         }
 
         return await _transacaoRepository.AddAsync(transacao);

@@ -17,8 +17,7 @@ public class TransacaoRepository : ITransacaoRepository
     public async Task<IEnumerable<Transacao>> GetAllAsync()
     {
         return await _context.Transacoes
-            .Include(t => t.Pagador)
-            .Include(t => t.Recebedor)
+            .Include(t => t.Pessoa)
             .ToListAsync();
     }
 
@@ -32,14 +31,14 @@ public class TransacaoRepository : ITransacaoRepository
     public async Task<decimal> GetTotalReceitasByPessoaAsync(int pessoaId)
     {
         return await _context.Transacoes
-            .Where(t => t.RecebedorId == pessoaId)
+            .Where(t => t.PessoaId == pessoaId && t.Tipo == "receita")
             .SumAsync(t => t.Valor);
     }
 
     public async Task<decimal> GetTotalDespesasByPessoaAsync(int pessoaId)
     {
         return await _context.Transacoes
-            .Where(t => t.PagadorId == pessoaId)
+            .Where(t => t.PessoaId == pessoaId && t.Tipo == "despesa")
             .SumAsync(t => t.Valor);
     }
 }
