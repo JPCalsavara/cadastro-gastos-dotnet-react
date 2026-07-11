@@ -1,0 +1,40 @@
+services:
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: cadastro_gastos_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: cadastrogastos
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: cadastro_gastos_api
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres_db
+    restart: unless-stopped
+
+  client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cadastro_gastos_client
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
