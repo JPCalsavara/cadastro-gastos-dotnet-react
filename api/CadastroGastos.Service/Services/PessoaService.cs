@@ -40,7 +40,7 @@ public class PessoaService : IPessoaService
     {
         var pessoa = await _pessoaRepository.GetByIdAsync(id);
         if (pessoa == null)
-            throw new ArgumentException("Pessoa não encontrada.");
+            throw new KeyNotFoundException("Pessoa não encontrada.");
 
         await _pessoaRepository.DeleteAsync(pessoa);
     }

@@ -23,5 +23,9 @@ public class AppDbContext : DbContext
             .WithMany(p => p.Transacoes)
             .HasForeignKey(t => t.PessoaId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Transacao>()
+            .Property(t => t.Tipo)
+            .HasConversion<string>();
     }
 }

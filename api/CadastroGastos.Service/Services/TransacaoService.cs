@@ -1,5 +1,6 @@
 using CadastroGastos.Domain.Entities;
 using CadastroGastos.Domain.Interfaces;
+using CadastroGastos.Domain.DTOs;
 
 namespace CadastroGastos.Service.Services;
 
@@ -19,21 +20,17 @@ public class TransacaoService : ITransacaoService
         return await _transacaoRepository.GetAllAsync();
     }
 
-    public async Task<Transacao> CriarAsync(Transacao transacao)
+    public async Task<Transacao> CriarAsync(TransacaoCreateDto transacaoDto)
     {
-        var pessoa = await _pessoaRepository.GetByIdAsync(transacao.PessoaId);
+        var pessoa = await _pessoaRepository.GetByIdAsync(transacaoDto.PessoaId);
 
         if (pessoa == null)
             throw new ArgumentException("Pessoa não encontrada.");
 
-        if (transacao.Valor <= 0)
+        if (transacaoDto.Valor <= 0)
             throw new ArgumentException("O valor da transação deve ser positivo.");
 
-        var tipoLower = transacao.Tipo?.ToLower() ?? "";
-        if (tipoLower != "receita" && tipoLower != "despesa")
-            throw new ArgumentException("O tipo da transação deve ser 'receita' ou 'despesa'.");
-
-        if (tipoLower == "receita" && pessoa.Idade < 18)
+        if (transacaoDto.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Receita && pessoa.Idade < 18)
         {
             throw new InvalidOperationException("Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.");
         }
@@ -42,10 +39,18 @@ public class TransacaoService : ITransacaoService
         var despesas = await _transacaoRepository.GetTotalDespesasByPessoaAsync(pessoa.Id);
         var saldoAtual = pessoa.Saldo + receitas - despesas;
 
-        if (transacao.Tipo.ToLower() == "despesa" && saldoAtual - transacao.Valor < 0)
+        if (transacaoDto.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Despesa && saldoAtual - transacaoDto.Valor < 0)
         {
             throw new InvalidOperationException("Saldo insuficiente. A transação deixaria o saldo negativo.");
         }
+
+        var transacao = new Transacao
+        {
+            Descricao = transacaoDto.Descricao,
+            Valor = transacaoDto.Valor,
+            Tipo = transacaoDto.Tipo,
+            PessoaId = transacaoDto.PessoaId
+        };
 
         return await _transacaoRepository.AddAsync(transacao);
     }

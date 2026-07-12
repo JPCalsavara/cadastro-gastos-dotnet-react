@@ -43,14 +43,7 @@ public class PessoasController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePessoa(int id)
     {
-        try
-        {
-            await _pessoaService.ExcluirAsync(id);
-            return NoContent();
-        }
-        catch (ArgumentException)
-        {
-            return NotFound();
-        }
+        await _pessoaService.ExcluirAsync(id);
+        return NoContent();
     }
 }

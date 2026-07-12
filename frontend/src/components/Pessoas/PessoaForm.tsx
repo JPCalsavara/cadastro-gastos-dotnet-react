@@ -7,7 +7,7 @@ import type { Pessoa } from '../../types';
 
 const pessoaSchema = z.object({
   nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres').regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
-  idade: z.string().refine(val => parseInt(val) > 0, 'Idade deve ser maior que 0')
+  idade: z.string().refine(val => 100 > parseInt(val) &&  parseInt(val) > 0, 'Idade deve ser maior que 0 e menor que 100')
 });
 
 type PessoaFormInputs = z.infer<typeof pessoaSchema>;

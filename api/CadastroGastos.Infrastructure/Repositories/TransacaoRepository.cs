@@ -31,14 +31,14 @@ public class TransacaoRepository : ITransacaoRepository
     public async Task<decimal> GetTotalReceitasByPessoaAsync(int pessoaId)
     {
         return await _context.Transacoes
-            .Where(t => t.PessoaId == pessoaId && t.Tipo == "receita")
+            .Where(t => t.PessoaId == pessoaId && t.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Receita)
             .SumAsync(t => t.Valor);
     }
 
     public async Task<decimal> GetTotalDespesasByPessoaAsync(int pessoaId)
     {
         return await _context.Transacoes
-            .Where(t => t.PessoaId == pessoaId && t.Tipo == "despesa")
+            .Where(t => t.PessoaId == pessoaId && t.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Despesa)
             .SumAsync(t => t.Valor);
     }
 }

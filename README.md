@@ -1,80 +1,87 @@
-# Controle de Gastos Residenciais
+# Cadastro de Gastos Residenciais 💰
 
-Este é um sistema web full-stack desenvolvido para facilitar o controle financeiro de uma residência. O foco do projeto foi criar uma arquitetura robusta e escalável, separando claramente as responsabilidades entre o frontend em React e o backend em .NET 8.
+Um sistema completo full-stack para gestão de despesas e receitas, desenvolvido como desafio técnico. Este projeto foi concebido utilizando a stack moderna de **.NET 8** no back-end e **React (Vite + TypeScript)** no front-end, tudo completamente orquestrado via **Docker Compose**.
 
-## Como a aplicação foi construída
+## 🚀 Tecnologias
 
-A solução inteira roda em containers Docker, o que significa que o banco de dados PostgreSQL, a API e o cliente React sobem com um único comando. Isso elimina dores de cabeça com configuração de ambiente local.
+### Back-end
+- **C# / .NET 8 (Web API)**
+- **Entity Framework Core (Code-First)**
+- **PostgreSQL** (Banco de dados relacional)
+- **xUnit & Moq** (Testes Unitários)
+- **WebApplicationFactory** (Testes de Integração In-Memory)
+- **Swagger/OpenAPI** (Documentação da API)
+- **Arquitetura em Camadas (Clean Architecture):** Api, Domain, Service, Infrastructure, Tests.
 
-No frontend, decidi elevar o estado principal para o componente raiz. Isso permite que a tela de Pessoas e a de Transações compartilhem a mesma fonte de verdade, recalculando saldos e totais instantaneamente sem precisar sobrecarregar a rede com dezenas de requisições.
+### Front-end
+- **React 18** (Vite)
+- **TypeScript**
+- **React Hook Form & Zod** (Para controle e validação de formulários)
+- **Lucide React** (Ícones modernos)
+- **Cypress** (Testes End-to-End - E2E)
+- **Vitest & React Testing Library** (Testes Unitários de Componentes UI)
+- CSS Puro focado em layout responsivo flexível (Grid/Flexbox).
 
-Para garantir que ninguém consiga burlar o sistema via ferramentas externas ou injetando requisições maliciosas, adotei uma dupla camada de validação. O React barra erros na interface para dar um feedback rápido ao usuário, mas é o backend quem atua como o verdadeiro guardião das regras de negócio.
+## 💡 Funcionalidades
 
-## Estrutura e Clean Architecture
+- **Cadastro de Pessoas**: Permite criar e excluir pessoas (exclusão de pessoa apaga suas transações em cascata). 
+- **Cadastro de Transações**: Lançamento de despesas e receitas atreladas a uma pessoa.
+- **Regras de Negócio Blindadas**:
+  - Pessoas menores de 18 anos **só podem cadastrar despesas**.
+  - O sistema impede a criação de despesas se a pessoa não tiver saldo suficiente, prevenindo balanço negativo.
+- **Painéis (Dashboard)**: Exibição reativa do total de receitas, despesas e o saldo global (líquido) do sistema, bem como a totalização e saldo por pessoa (Card de Resumo).
+- **Tratamento Global de Exceções**: O back-end mapeia violações de domínio (ArgumentException, InvalidOperationException) diretamente para retornos HTTP consistentes (400 Bad Request, 404 NotFound) interceptando o pipeline via Middlewares customizados.
 
-O backend em .NET segue os princípios de Clean Architecture. Dividi o código em camadas bem definidas para manter tudo testável e organizado:
+## ⚙️ Como rodar o projeto
 
-```text
-cadastro-dotnet-react/
-├── api/
-│   ├── CadastroGastos.Api/             # Exposição dos endpoints REST
-│   ├── CadastroGastos.Domain/          # Entidades e interfaces centrais
-│   ├── CadastroGastos.Infrastructure/  # Comunicação com o PostgreSQL via EF Core
-│   ├── CadastroGastos.Service/         # Lógica pura de negócios e validações
-│   └── CadastroGastos.Tests/           # Testes automatizados (xUnit + Moq)
-├── frontend/                           # Interface em React + Vite + TypeScript
-└── docker-compose.yml                  # Orquestração do ambiente
+Você pode subir toda a infraestrutura da aplicação com um único comando, pois o projeto está dockerizado!
+
+### Pré-requisitos
+- Ter o [Docker](https://www.docker.com/) e o Docker Compose instalados na sua máquina.
+
+### Passo a Passo (Ambiente Dockerizado)
+
+1. Clone o repositório na sua máquina local.
+2. Na raiz do projeto, execute o comando:
+
+```bash
+docker compose up --build
 ```
 
-## Como o domínio foi modelado
+3. Aguarde até que o banco de dados Postgres e as imagens do backend e frontend terminem o build e a inicialização.
+4. Acesse o sistema pelo navegador:
+   - **Frontend (Web App):** [http://localhost](http://localhost)
+   - **Backend API (Swagger):** [http://localhost:5000/swagger](http://localhost:5000/swagger)
 
-O coração do sistema gira em torno de dois conceitos: Pessoas e Transações.
+---
 
-Uma **Pessoa** possui seu identificador, nome e idade. No ecossistema financeiro, ela atua tanto como quem paga quanto como quem recebe o dinheiro.
+## 🧪 Como executar os Testes
 
-A **Transação** representa o movimento do dinheiro. Ela registra de onde o valor saiu e para quem ele foi, a quantia exata e se caracteriza uma despesa ou receita. Essa abordagem garante rastreabilidade total do fluxo de caixa.
+O projeto contém três pilares de testes assegurando 100% de confiabilidade na pipeline.
 
-## Regras de Negócio e Segurança
+### 1. Testes do Backend (Unitários e Integração)
+Na pasta raiz do projeto, abra um terminal e rode:
+```bash
+cd api
+dotnet test
+```
 
-Para manter a consistência financeira da aplicação, implementei verificações estritas no nível de serviço:
+### 2. Testes do Frontend (Unitários - Vitest)
+Para testar a estabilidade dos componentes React isolados:
+```bash
+cd frontend
+npm install
+npm run test:unit
+```
 
-- **Proteção contra Saldo Negativo:** O sistema não permite registrar uma despesa que deixe o pagador no vermelho. A consistência matemática da conta é mantida a todo custo.
-- **Prevenção de Ciclos:** Uma transação é bloqueada caso o pagador e o recebedor sejam a mesma pessoa.
-- **Regra de Menoridade:** Usuários com menos de 18 anos têm restrições. Eles só podem realizar despesas, sendo estritamente bloqueados de participar de receitas.
-- **Integridade de Vínculos:** Graças ao Entity Framework, é impossível registrar uma transação apontando para um usuário fantasma. Além disso, se uma pessoa for deletada, todo o seu histórico financeiro é apagado em cascata para não poluir o banco.
+### 3. Testes End-to-End (Fluxo Completo - Cypress)
+Com a aplicação **rodando no Docker** (`docker compose up`), abra um terminal na pasta do frontend:
+```bash
+cd frontend
+npm install
+npm run test:e2e
+```
+*(Ele irá realizar interações reais num navegador headless validando o banco de dados e a interface no container)*.
 
-## Explorando a API
-
-Você pode explorar e testar todos os endpoints de forma interativa acessando a interface do Swagger em `http://localhost:5000/swagger/index.html` após iniciar a aplicação.
-
-### Pessoas
-- `GET /api/pessoas` Lista todo mundo que está cadastrado.
-- `GET /api/pessoas/{id}` Traz os detalhes de um usuário específico.
-- `POST /api/pessoas` Insere um novo usuário no sistema.
-- `DELETE /api/pessoas/{id}` Exclui o cadastro e limpa todas as transações ligadas a ele automaticamente.
-
-### Transações
-- `GET /api/transacoes` Lista o histórico completo de movimentações.
-- `POST /api/transacoes` Tenta registrar uma transação, passando primeiro por todo o motor de regras de negócio antes de salvar.
-
-## Como testar na sua máquina
-
-Você não precisa instalar SDKs pesados ou configurar bancos de dados na mão. Tendo o Docker instalado, basta seguir estes passos rápidos:
-
-1. Clone este repositório.
-2. Acesse a pasta do projeto pelo terminal e rode o comando:
-   ```bash
-   docker compose up -d --build
-   ```
-3. Abra o seu navegador e acesse a interface gráfica em `http://localhost`.
-
-O banco de dados subirá silenciosamente na porta 5432 e as tabelas serão criadas de forma automática pelas migrations do Entity Framework assim que a API iniciar.
-
-## Requisitos do Desafio Atendidos
-
-Todos os requisitos propostos na especificação técnica original foram contemplados com sucesso:
-
-- Backend construído integralmente em .NET 8.
-- Frontend responsivo desenvolvido com React, TypeScript e Vite.
-- Dados persistidos de forma relacional no PostgreSQL.
-- Código validado por testes unitários focados na lógica de negócios e amplamente documentado.
+---
+Desenvolvido por João Pedro Calsavara para o Desafio Técnico (Maxiprod).

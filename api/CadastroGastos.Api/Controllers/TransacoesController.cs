@@ -23,20 +23,9 @@ public class TransacoesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Transacao>> PostTransacao(Transacao transacao)
+    public async Task<ActionResult<Transacao>> PostTransacao(CadastroGastos.Domain.DTOs.TransacaoCreateDto transacaoDto)
     {
-        try
-        {
-            var criada = await _transacaoService.CriarAsync(transacao);
-            return CreatedAtAction(nameof(GetTransacoes), new { id = criada.Id }, criada);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var criada = await _transacaoService.CriarAsync(transacaoDto);
+        return CreatedAtAction(nameof(GetTransacoes), new { id = criada.Id }, criada);
     }
 }

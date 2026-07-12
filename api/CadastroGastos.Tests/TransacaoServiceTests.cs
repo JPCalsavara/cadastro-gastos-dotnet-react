@@ -20,11 +20,11 @@ public class TransacaoServiceTests
 
         var service = new TransacaoService(mockTransacaoRepo.Object, mockPessoaRepo.Object);
         
-        var transacao = new Transacao 
+        var transacao = new CadastroGastos.Domain.DTOs.TransacaoCreateDto 
         { 
             PessoaId = 1, 
             Valor = 100, 
-            Tipo = "receita" 
+            Tipo = CadastroGastos.Domain.Enums.TipoTransacao.Receita 
         };
 
         // Act & Assert
@@ -48,11 +48,11 @@ public class TransacaoServiceTests
 
         var service = new TransacaoService(mockTransacaoRepo.Object, mockPessoaRepo.Object);
         
-        var transacao = new Transacao 
+        var transacao = new CadastroGastos.Domain.DTOs.TransacaoCreateDto 
         { 
             PessoaId = 1, 
             Valor = 100, // Ele só tem 50 de saldo livre, 100 deixaria negativo
-            Tipo = "despesa" 
+            Tipo = CadastroGastos.Domain.Enums.TipoTransacao.Despesa 
         };
 
         // Act & Assert
@@ -74,24 +74,24 @@ public class TransacaoServiceTests
         mockTransacaoRepo.Setup(r => r.GetTotalReceitasByPessoaAsync(1)).ReturnsAsync(0);
         mockTransacaoRepo.Setup(r => r.GetTotalDespesasByPessoaAsync(1)).ReturnsAsync(0);
 
-        var transacao = new Transacao 
+        var transacaoDto = new CadastroGastos.Domain.DTOs.TransacaoCreateDto 
         { 
-            Id = 99,
             PessoaId = 1, 
             Valor = 100, 
-            Tipo = "despesa" 
+            Tipo = CadastroGastos.Domain.Enums.TipoTransacao.Despesa 
         };
 
-        mockTransacaoRepo.Setup(r => r.AddAsync(It.IsAny<Transacao>())).ReturnsAsync(transacao);
+        var transacaoCriada = new Transacao { Id = 99, PessoaId = 1, Valor = 100, Tipo = CadastroGastos.Domain.Enums.TipoTransacao.Despesa };
+        mockTransacaoRepo.Setup(r => r.AddAsync(It.IsAny<Transacao>())).ReturnsAsync(transacaoCriada);
 
         var service = new TransacaoService(mockTransacaoRepo.Object, mockPessoaRepo.Object);
 
         // Act
-        var resultado = await service.CriarAsync(transacao);
+        var resultado = await service.CriarAsync(transacaoDto);
 
         // Assert
         Assert.NotNull(resultado);
         Assert.Equal(99, resultado.Id);
-        mockTransacaoRepo.Verify(r => r.AddAsync(transacao), Times.Once);
+        mockTransacaoRepo.Verify(r => r.AddAsync(It.IsAny<Transacao>()), Times.Once);
     }
 }

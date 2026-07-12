@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using CadastroGastos.Domain.Enums;
 
 namespace CadastroGastos.Domain.Entities;
 
@@ -18,11 +19,11 @@ public class Transacao
     public decimal Valor { get; set; }
 
     [Required]
-    public string Tipo { get; set; } = string.Empty; // "receita" ou "despesa"
+    public TipoTransacao Tipo { get; set; }
 
     // Relacionamento com Pessoa
     public int PessoaId { get; set; }
     
     [ForeignKey("PessoaId")]
-    public virtual Pessoa Pessoa { get; set; } = null!;
+    public virtual Pessoa? Pessoa { get; set; }
 }
