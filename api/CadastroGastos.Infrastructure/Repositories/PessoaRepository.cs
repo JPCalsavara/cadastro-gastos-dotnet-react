@@ -24,6 +24,11 @@ public class PessoaRepository : IPessoaRepository
         return await _context.Pessoas.FindAsync(id);
     }
 
+    public async Task<bool> ExisteNomeAsync(string nome)
+    {
+        return await _context.Pessoas.AnyAsync(p => p.Nome.ToLower() == nome.ToLower());
+    }
+
     public async Task<Pessoa> AddAsync(Pessoa pessoa)
     {
         _context.Pessoas.Add(pessoa);

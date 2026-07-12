@@ -24,7 +24,12 @@ public class PessoaService : IPessoaService
 
     public async Task<Pessoa> CriarAsync(Pessoa pessoa)
     {
-        // Aqui poderia haver validações específicas de pessoa
+        if (string.IsNullOrWhiteSpace(pessoa.Nome) || pessoa.Nome.Length < 3)
+            throw new ArgumentException("O nome da pessoa deve ter pelo menos 3 caracteres.");
+
+        if (await _pessoaRepository.ExisteNomeAsync(pessoa.Nome))
+            throw new InvalidOperationException($"Já existe uma pessoa cadastrada com o nome '{pessoa.Nome}'.");
+
         return await _pessoaRepository.AddAsync(pessoa);
     }
 
