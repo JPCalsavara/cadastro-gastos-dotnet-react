@@ -1,87 +1,62 @@
-# Cadastro de Gastos Residenciais 💰
+# Cadastro de Gastos Residenciais
 
-Um sistema completo full-stack para gestão de despesas e receitas, desenvolvido como desafio técnico. Este projeto foi concebido utilizando a stack moderna de **.NET 8** no back-end e **React (Vite + TypeScript)** no front-end, tudo completamente orquestrado via **Docker Compose**.
+Sistema web para controle de receitas e despesas residenciais desenvolvido como solução para desafio técnico. 
 
-## 🚀 Tecnologias
+A aplicação permite cadastrar pessoas e registrar transações financeiras (receitas e despesas) associadas a elas, incluindo regras de negócio como controle de idade para receitas e validação de saldo para evitar contas negativas.
 
-### Back-end
-- **C# / .NET 8 (Web API)**
-- **Entity Framework Core (Code-First)**
-- **PostgreSQL** (Banco de dados relacional)
-- **xUnit & Moq** (Testes Unitários)
-- **WebApplicationFactory** (Testes de Integração In-Memory)
-- **Swagger/OpenAPI** (Documentação da API)
-- **Arquitetura em Camadas (Clean Architecture):** Api, Domain, Service, Infrastructure, Tests.
+## Arquitetura e Tecnologias
+
+O projeto é dividido em um back-end construído em .NET e um front-end em React, orquestrados via Docker Compose.
+
+### Back-end (API REST)
+Desenvolvido em **.NET 8** utilizando princípios de Clean Architecture, isolando regras de negócio em camadas de domínio e serviço. 
+- **Entity Framework Core**: Acesso a dados (Code-First) com cascata configurada.
+- **PostgreSQL**: Banco de dados relacional.
+- **Exception Handling**: Middleware global para mapeamento de exceções de domínio em respostas HTTP (400, 404, etc).
+- **xUnit + Moq**: Testes unitários das lógicas e serviços.
+- **WebApplicationFactory**: Testes de integração em banco em memória validando os endpoints.
 
 ### Front-end
-- **React 18** (Vite)
-- **TypeScript**
-- **React Hook Form & Zod** (Para controle e validação de formulários)
-- **Lucide React** (Ícones modernos)
-- **Cypress** (Testes End-to-End - E2E)
-- **Vitest & React Testing Library** (Testes Unitários de Componentes UI)
-- CSS Puro focado em layout responsivo flexível (Grid/Flexbox).
+Desenvolvido em **React 18** (via **Vite**) e **TypeScript**.
+- **React Hook Form + Zod**: Gerenciamento de estado e validação de formulários.
+- **Vitest + React Testing Library**: Testes unitários validando cálculos de interface e renderização.
+- **Cypress**: Testes End-to-End validando o fluxo principal da aplicação.
+- Estilização em CSS puro usando propriedades responsivas (Flexbox e Grid).
 
-## 💡 Funcionalidades
+## Como Executar
 
-- **Cadastro de Pessoas**: Permite criar e excluir pessoas (exclusão de pessoa apaga suas transações em cascata). 
-- **Cadastro de Transações**: Lançamento de despesas e receitas atreladas a uma pessoa.
-- **Regras de Negócio Blindadas**:
-  - Pessoas menores de 18 anos **só podem cadastrar despesas**.
-  - O sistema impede a criação de despesas se a pessoa não tiver saldo suficiente, prevenindo balanço negativo.
-- **Painéis (Dashboard)**: Exibição reativa do total de receitas, despesas e o saldo global (líquido) do sistema, bem como a totalização e saldo por pessoa (Card de Resumo).
-- **Tratamento Global de Exceções**: O back-end mapeia violações de domínio (ArgumentException, InvalidOperationException) diretamente para retornos HTTP consistentes (400 Bad Request, 404 NotFound) interceptando o pipeline via Middlewares customizados.
-
-## ⚙️ Como rodar o projeto
-
-Você pode subir toda a infraestrutura da aplicação com um único comando, pois o projeto está dockerizado!
-
-### Pré-requisitos
-- Ter o [Docker](https://www.docker.com/) e o Docker Compose instalados na sua máquina.
-
-### Passo a Passo (Ambiente Dockerizado)
-
-1. Clone o repositório na sua máquina local.
-2. Na raiz do projeto, execute o comando:
+A infraestrutura completa roda em containers via Docker.
 
 ```bash
+# Na raiz do projeto, execute:
 docker compose up --build
 ```
 
-3. Aguarde até que o banco de dados Postgres e as imagens do backend e frontend terminem o build e a inicialização.
-4. Acesse o sistema pelo navegador:
-   - **Frontend (Web App):** [http://localhost](http://localhost)
-   - **Backend API (Swagger):** [http://localhost:5000/swagger](http://localhost:5000/swagger)
+Após a inicialização dos containers, o acesso se dá pelas URLs:
+- **Web App (React)**: [http://localhost](http://localhost)
+- **Documentação da API (Swagger)**: [http://localhost:5000/swagger](http://localhost:5000/swagger)
 
----
+## Suíte de Testes
 
-## 🧪 Como executar os Testes
+Para garantir a qualidade, o código contém cobertura de testes unitários, integração e E2E.
 
-O projeto contém três pilares de testes assegurando 100% de confiabilidade na pipeline.
-
-### 1. Testes do Backend (Unitários e Integração)
-Na pasta raiz do projeto, abra um terminal e rode:
+**Testes de Back-end (Unitários e Integração)**
 ```bash
-cd api
+cd api/CadastroGastos.Tests
 dotnet test
 ```
 
-### 2. Testes do Frontend (Unitários - Vitest)
-Para testar a estabilidade dos componentes React isolados:
+**Testes Unitários de Front-end (Vitest)**
 ```bash
 cd frontend
 npm install
 npm run test:unit
 ```
 
-### 3. Testes End-to-End (Fluxo Completo - Cypress)
-Com a aplicação **rodando no Docker** (`docker compose up`), abra um terminal na pasta do frontend:
+**Testes E2E (Cypress)**
+Certifique-se de que a aplicação está rodando na porta 80 via Docker (`docker compose up`) antes de executar:
 ```bash
 cd frontend
 npm install
 npm run test:e2e
 ```
-*(Ele irá realizar interações reais num navegador headless validando o banco de dados e a interface no container)*.
-
----
-Desenvolvido por João Pedro Calsavara para o Desafio Técnico (Maxiprod).
