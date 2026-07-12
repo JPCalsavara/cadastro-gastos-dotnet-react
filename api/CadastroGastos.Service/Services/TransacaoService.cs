@@ -26,7 +26,14 @@ public class TransacaoService : ITransacaoService
         if (pessoa == null)
             throw new ArgumentException("Pessoa não encontrada.");
 
-        if (transacao.Tipo.ToLower() == "receita" && pessoa.Idade < 18)
+        if (transacao.Valor <= 0)
+            throw new ArgumentException("O valor da transação deve ser positivo.");
+
+        var tipoLower = transacao.Tipo?.ToLower() ?? "";
+        if (tipoLower != "receita" && tipoLower != "despesa")
+            throw new ArgumentException("O tipo da transação deve ser 'receita' ou 'despesa'.");
+
+        if (tipoLower == "receita" && pessoa.Idade < 18)
         {
             throw new InvalidOperationException("Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.");
         }

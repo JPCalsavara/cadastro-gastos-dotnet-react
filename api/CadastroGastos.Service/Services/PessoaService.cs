@@ -27,6 +27,9 @@ public class PessoaService : IPessoaService
         if (string.IsNullOrWhiteSpace(pessoa.Nome) || pessoa.Nome.Length < 3)
             throw new ArgumentException("O nome da pessoa deve ter pelo menos 3 caracteres.");
 
+        if (pessoa.Idade <= 0)
+            throw new ArgumentException("A idade deve ser maior que zero.");
+
         if (await _pessoaRepository.ExisteNomeAsync(pessoa.Nome))
             throw new InvalidOperationException($"Já existe uma pessoa cadastrada com o nome '{pessoa.Nome}'.");
 
