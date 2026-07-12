@@ -4,6 +4,14 @@ Sistema web para controle de receitas e despesas residenciais desenvolvido como 
 
 A aplicação permite cadastrar pessoas e registrar transações financeiras (receitas e despesas) associadas a elas, incluindo regras de negócio como controle de idade para receitas e validação de saldo para evitar contas negativas.
 
+## 💡 Notas sobre o Desafio Técnico
+
+Como diferencial para este desafio, as seguintes melhorias foram implementadas além dos requisitos básicos:
+- **Clean Architecture & SOLID**: O back-end não mistura regras de negócio nos controllers. Foi criado um fluxo limpo com DTOs e validação de domínio em uma camada de Serviço dedicada.
+- **Prevenção de Saldo Negativo**: Como bônus (permitido no guia), foi implementada uma regra que bloqueia a criação de despesas caso o saldo final da pessoa se torne negativo.
+- **Tratamento Global de Erros**: Uso de *Global Exception Middleware* para capturar falhas de domínio e traduzi-las automaticamente para HTTP 400 (Bad Request), mantendo os controllers magros.
+- **Testes em 3 Camadas**: Implementação de testes Unitários, de Integração (com WebApplicationFactory e banco em memória) e **End-to-End (Cypress)** cobrindo o frontend real contra a API.
+
 ## Arquitetura e Tecnologias
 
 O projeto é dividido em um back-end construído em .NET e um front-end em React, orquestrados via Docker Compose.
