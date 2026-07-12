@@ -1,6 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { criarTransacao } from '../../services/api';
 import type { Transacao, Pessoa } from '../../types';
+
+const transacaoSchema = z.object({
+  descricao: z.string().min(3, 'Descrição deve ter pelo menos 3 caracteres'),
+  valor: z.string().refine(val => parseFloat(val) > 0, 'Valor deve ser positivo'),
+  tipo: z.union([z.literal('receita'), z.literal('despesa')]),
+  pessoaId: z.string().refine(val => parseInt(val) > 0, 'Selecione uma pessoa')
+});
+
+type TransacaoFormInputs = z.infer<typeof transacaoSchema>;
 
 interface TransacaoFormProps {
   onAdd: (novaTransacao: Transacao) => void;
@@ -9,62 +21,31 @@ interface TransacaoFormProps {
   onRefetch: () => Promise<void>;
 }
 
-export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }: TransacaoFormProps) {
+export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [descricao, setDescricao] = useState('');
-  const [valor, setValor] = useState('');
-  const [tipo, setTipo] = useState('');
-  const [pessoaId, setPessoaId] = useState('');
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<TransacaoFormInputs>({
+    resolver: zodResolver(transacaoSchema)
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    const pessoa = pessoas.find(p => p.id === parseInt(pessoaId));
-    const valorNum = parseFloat(valor);
+  const onSubmit = async (data: TransacaoFormInputs) => {
+    const pessoa = pessoas.find(p => p.id === parseInt(data.pessoaId));
 
     // Regra de Negócio: Menores de 18 anos só podem cadastrar despesas
-    if (tipo === 'receita') {
-      if (pessoa && pessoa.idade < 18) {
-        alert('Erro: Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.');
-        return;
-      }
-    }
-
-    // Regra de Negócio: O usuário não pode ficar com saldo negativo
-    const calculaSaldo = (id: number) => {
-      const p = pessoas.find(p => p.id === id);
-      const saldoInicial = p ? p.saldo : 0;
-      
-      const receitas = transacoes
-        .filter(t => t.pessoaId === id && t.tipo === 'receita')
-        .reduce((acc, curr) => acc + curr.valor, 0);
-      const despesas = transacoes
-        .filter(t => t.pessoaId === id && t.tipo === 'despesa')
-        .reduce((acc, curr) => acc + curr.valor, 0);
-      
-      return saldoInicial + receitas - despesas;
-    };
-
-    const saldoAtual = calculaSaldo(parseInt(pessoaId));
-    
-    if (tipo === 'despesa' && saldoAtual - valorNum < 0) {
-      alert('Erro: Saldo insuficiente. A transação deixaria o saldo negativo.');
+    if (data.tipo === 'receita' && pessoa && pessoa.idade < 18) {
+      alert('Erro: Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.');
       return;
     }
     
     try {
       const transacaoCriada = await criarTransacao({
-        descricao,
-        valor: valorNum,
-        tipo,
-        pessoaId: parseInt(pessoaId)
+        descricao: data.descricao,
+        valor: parseFloat(data.valor),
+        tipo: data.tipo,
+        pessoaId: parseInt(data.pessoaId)
       });
 
       onAdd(transacaoCriada);
-      setDescricao('');
-      setValor('');
-      setTipo('');
-      setPessoaId('');
+      reset();
       setIsOpen(false);
       // Recarrega dados do servidor para sincronizar saldos
       await onRefetch();
@@ -90,16 +71,15 @@ export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }:
               <button type="button" className="btn-close" onClick={() => setIsOpen(false)}>X</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="dynamic-form-body">
+            <form onSubmit={handleSubmit(onSubmit)} className="dynamic-form-body">
               <div className="form-group">
                 <label>Descrição:</label>
                 <input 
                   type="text" 
-                  value={descricao} 
-                  onChange={(e) => setDescricao(e.target.value)} 
-                  required 
+                  {...register('descricao')}
                   placeholder="Ex: Aluguel, Supermercado..."
                 />
+                {errors.descricao && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.descricao.message}</span>}
               </div>
               
               <div className="form-group">
@@ -107,29 +87,30 @@ export default function TransacaoForm({ onAdd, pessoas, transacoes, onRefetch }:
                 <input 
                   type="number" 
                   step="0.01"
-                  value={valor} 
-                  onChange={(e) => setValor(e.target.value)} 
-                  required 
+                  {...register('valor')}
                   placeholder="Ex: 1500.50"
                 />
+                {errors.valor && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.valor.message}</span>}
               </div>
               
               <div className="form-group">
                 <label>Tipo:</label>
-                <select value={tipo} onChange={(e) => setTipo(e.target.value)} required>
+                <select {...register('tipo')}>
                   <option value="">Selecione o tipo...</option>
                   <option value="receita">Receita</option>
                   <option value="despesa">Despesa</option>
                 </select>
+                {errors.tipo && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.tipo.message}</span>}
               </div>
               <div className="form-group">
                 <label>Pessoa:</label>
-                <select value={pessoaId} onChange={(e) => setPessoaId(e.target.value)} required>
-                  <option value="">Selecione a pessoa...</option>
+                <select {...register('pessoaId')}>
+                  <option value={0}>Selecione a pessoa...</option>
                   {pessoas && pessoas.map(p => (
                     <option key={p.id} value={p.id}>{p.nome}</option>
                   ))}
                 </select>
+                {errors.pessoaId && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.pessoaId.message}</span>}
               </div>
               
               <button type="submit" className="btn-submit">Salvar Transação</button>

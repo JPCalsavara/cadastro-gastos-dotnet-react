@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { criarPessoa } from '../../services/api';
 import type { Pessoa } from '../../types';
+
+const pessoaSchema = z.object({
+  nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres').regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras e espaços'),
+  idade: z.string().refine(val => parseInt(val) > 0, 'Idade deve ser maior que 0')
+});
+
+type PessoaFormInputs = z.infer<typeof pessoaSchema>;
 
 interface PessoaFormProps {
   onAdd: (novaPessoa: Pessoa) => void;
@@ -8,25 +18,23 @@ interface PessoaFormProps {
 
 export default function PessoaForm({ onAdd }: PessoaFormProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [nome, setNome] = useState('');
-  const [idade, setIdade] = useState('');
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<PessoaFormInputs>({
+    resolver: zodResolver(pessoaSchema)
+  });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
+  const onSubmit = async (data: PessoaFormInputs) => {
     try {
       const novaPessoa = await criarPessoa({
-        nome,
-        idade: parseInt(idade),
+        nome: data.nome,
+        idade: parseInt(data.idade),
         saldo: 0
       });
 
       onAdd(novaPessoa);
-      setNome('');
-      setIdade('');
+      reset();
       setIsOpen(false);
-    } catch (error) {
-      alert(error);
+    } catch (error: any) {
+      alert(`Erro: ${error.message}`);
     }
   };
 
@@ -47,26 +55,24 @@ export default function PessoaForm({ onAdd }: PessoaFormProps) {
               <button type="button" className="btn-close" onClick={() => setIsOpen(false)}>X</button>
             </div>
             
-            <form onSubmit={handleSubmit} className="dynamic-form-body">
+            <form onSubmit={handleSubmit(onSubmit)} className="dynamic-form-body">
               <div className="form-group">
                 <label>Nome:</label>
                 <input 
                   type="text" 
-                  value={nome} 
-                  onChange={(e) => setNome(e.target.value)} 
-                  required 
+                  {...register('nome')}
                   placeholder="Ex: João Silva"
                 />
+                {errors.nome && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.nome.message}</span>}
               </div>
               <div className="form-group">
                 <label>Idade:</label>
                 <input 
                   type="number" 
-                  value={idade} 
-                  onChange={(e) => setIdade(e.target.value)} 
-                  required 
+                  {...register('idade')}
                   placeholder="Ex: 25"
                 />
+                {errors.idade && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.idade.message}</span>}
               </div>
               <button type="submit" className="btn-submit">Salvar Pessoa</button>
             </form>
