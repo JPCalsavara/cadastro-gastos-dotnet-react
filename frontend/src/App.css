@@ -348,3 +348,11 @@
   cursor: not-allowed;
 }
 /* #endregion LISTAS, PAGINAÇÃO E LAYOUT PRINCIPAL */
+
+/* #region MENSAGENS DE ERRO */
+.error-msg {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+/* #endregion MENSAGENS DE ERRO */

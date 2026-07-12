@@ -79,7 +79,7 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
                   {...register('descricao')}
                   placeholder="Ex: Aluguel, Supermercado..."
                 />
-                {errors.descricao && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.descricao.message}</span>}
+                {errors.descricao && <span className="error-msg">{errors.descricao.message}</span>}
               </div>
               
               <div className="form-group">
@@ -90,7 +90,7 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
                   {...register('valor')}
                   placeholder="Ex: 1500.50"
                 />
-                {errors.valor && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.valor.message}</span>}
+                {errors.valor && <span className="error-msg">{errors.valor.message}</span>}
               </div>
               
               <div className="form-group">
@@ -100,7 +100,7 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
                   <option value="receita">Receita</option>
                   <option value="despesa">Despesa</option>
                 </select>
-                {errors.tipo && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.tipo.message}</span>}
+                {errors.tipo && <span className="error-msg">{errors.tipo.message}</span>}
               </div>
               <div className="form-group">
                 <label>Pessoa:</label>
@@ -110,7 +110,7 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
                     <option key={p.id} value={p.id}>{p.nome}</option>
                   ))}
                 </select>
-                {errors.pessoaId && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.pessoaId.message}</span>}
+                {errors.pessoaId && <span className="error-msg">{errors.pessoaId.message}</span>}
               </div>
               
               <button type="submit" className="btn-submit">Salvar Transação</button>

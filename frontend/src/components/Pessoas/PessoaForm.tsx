@@ -63,7 +63,7 @@ export default function PessoaForm({ onAdd }: PessoaFormProps) {
                   {...register('nome')}
                   placeholder="Ex: João Silva"
                 />
-                {errors.nome && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.nome.message}</span>}
+                {errors.nome && <span className="error-msg">{errors.nome.message}</span>}
               </div>
               <div className="form-group">
                 <label>Idade:</label>
@@ -72,7 +72,7 @@ export default function PessoaForm({ onAdd }: PessoaFormProps) {
                   {...register('idade')}
                   placeholder="Ex: 25"
                 />
-                {errors.idade && <span className="error-msg" style={{color: 'red', fontSize: '0.8rem', marginTop: '0.2rem'}}>{errors.idade.message}</span>}
+                {errors.idade && <span className="error-msg">{errors.idade.message}</span>}
               </div>
               <button type="submit" className="btn-submit">Salvar Pessoa</button>
             </form>
