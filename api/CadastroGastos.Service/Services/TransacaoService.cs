@@ -39,9 +39,9 @@ public class TransacaoService : ITransacaoService
         var despesas = await _transacaoRepository.GetTotalDespesasByPessoaAsync(pessoa.Id);
         var saldoAtual = pessoa.Saldo + receitas - despesas;
 
-        if (transacaoDto.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Despesa && saldoAtual - transacaoDto.Valor < 0)
+        if (pessoa.Idade >= 18 && transacaoDto.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Despesa && saldoAtual - transacaoDto.Valor < 0)
         {
-            throw new InvalidOperationException("Saldo insuficiente. A transação deixaria o saldo negativo.");
+            throw new InvalidOperationException("Saldo insuficiente. Apenas menores de idade (dependentes) podem ter saldo negativo.");
         }
 
         var transacao = new Transacao
