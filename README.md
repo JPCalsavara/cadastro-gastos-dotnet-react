@@ -4,7 +4,7 @@ Sistema web para controle de receitas e despesas residenciais desenvolvido como 
 
 A aplicação permite cadastrar pessoas e registrar transações financeiras (receitas e despesas) associadas a elas, incluindo regras de negócio como controle de idade para receitas e validação de saldo para evitar contas negativas.
 
-## 💡 Notas sobre o Desafio Técnico
+## Notas sobre o Desafio Técnico
 
 Como diferencial para este desafio, as seguintes melhorias foram implementadas além dos requisitos básicos:
 - **Clean Architecture & SOLID**: O back-end não mistura regras de negócio nos controllers. Foi criado um fluxo limpo com DTOs e validação de domínio em uma camada de Serviço dedicada.
