@@ -65,20 +65,23 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
         )}
       </div>
 
-      {apiError && (
-        <button className="error-banner" onClick={() => setApiError(null)}>
-          ⚠️ {apiError} (Clique para fechar)
-        </button>
-      )}
-
       {isOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="dynamic-form-header">
               <h3>Nova Transação</h3>
-              <button type="button" className="btn-close" onClick={() => setIsOpen(false)}>X</button>
+              <button type="button" className="btn-close" onClick={() => {
+                setIsOpen(false);
+                setApiError(null);
+              }}>X</button>
             </div>
             
+            {apiError && (
+              <button className="error-banner" onClick={() => setApiError(null)}>
+                ⚠️ {apiError} (Clique para fechar)
+              </button>
+            )}
+
             <form onSubmit={handleSubmit(onSubmit)} className="dynamic-form-body">
               <div className="form-group">
                 <label>Descrição:</label>
