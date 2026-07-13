@@ -23,16 +23,18 @@ interface TransacaoFormProps {
 
 export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFormProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TransacaoFormInputs>({
     resolver: zodResolver(transacaoSchema)
   });
 
   const onSubmit = async (data: TransacaoFormInputs) => {
+    setApiError(null);
     const pessoa = pessoas.find(p => p.id === parseInt(data.pessoaId));
 
     // Regra de Negócio: Menores de 18 anos só podem cadastrar despesas
     if (data.tipo === 'receita' && pessoa && pessoa.idade < 18) {
-      alert('Erro: Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.');
+      setApiError('Pessoas menores de 18 anos só podem registrar despesas.');
       return;
     }
     
@@ -50,7 +52,7 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
       // Recarrega dados do servidor para sincronizar saldos
       await onRefetch();
     } catch (error: any) {
-      alert(`Erro no servidor: ${error.message}`);
+      setApiError(error.message || 'Erro ao comunicar com o servidor');
     }
   };
 
@@ -62,6 +64,12 @@ export default function TransacaoForm({ onAdd, pessoas, onRefetch }: TransacaoFo
           <button onClick={() => setIsOpen(true)} className="btn-toggle">+ Adicionar Transação</button>
         )}
       </div>
+
+      {apiError && (
+        <button className="error-banner" onClick={() => setApiError(null)}>
+          ⚠️ {apiError} (Clique para fechar)
+        </button>
+      )}
 
       {isOpen && (
         <div className="modal-overlay">

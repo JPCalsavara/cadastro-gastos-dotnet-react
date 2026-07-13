@@ -217,9 +217,8 @@
 /* #endregion UTILITÁRIOS GERAIS */
 
 
-/* #region ESTILOS DO BALANÇO GERAL */
 .card-geral {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--primary-color);
   padding: 1rem;
   border-radius: 12px;
   background-color: var(--input-bg);
@@ -228,6 +227,26 @@
   align-items: center;
   text-align: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-banner {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.error-banner:hover {
+  background-color: #ffcdd2;
 }
 
 .card-geral h3 {

@@ -18,11 +18,13 @@ interface PessoaFormProps {
 
 export default function PessoaForm({ onAdd }: PessoaFormProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
   const { register, handleSubmit, reset, formState: { errors } } = useForm<PessoaFormInputs>({
     resolver: zodResolver(pessoaSchema)
   });
 
   const onSubmit = async (data: PessoaFormInputs) => {
+    setApiError(null);
     try {
       const novaPessoa = await criarPessoa({
         nome: data.nome,
@@ -34,7 +36,7 @@ export default function PessoaForm({ onAdd }: PessoaFormProps) {
       reset();
       setIsOpen(false);
     } catch (error: any) {
-      alert(`Erro: ${error.message}`);
+      setApiError(error.message || 'Erro ao comunicar com o servidor');
     }
   };
 
@@ -46,6 +48,12 @@ export default function PessoaForm({ onAdd }: PessoaFormProps) {
           <button onClick={() => setIsOpen(true)} className="btn-toggle">+ Adicionar Pessoa</button>
         )}
       </div>
+
+      {apiError && (
+        <button className="error-banner" onClick={() => setApiError(null)}>
+          ⚠️ {apiError} (Clique para fechar)
+        </button>
+      )}
 
       {isOpen && (
         <div className="modal-overlay">

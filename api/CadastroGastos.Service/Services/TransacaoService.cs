@@ -35,14 +35,7 @@ public class TransacaoService : ITransacaoService
             throw new InvalidOperationException("Pessoas menores de 18 anos só podem estar envolvidas em transações de despesas.");
         }
 
-        var receitas = await _transacaoRepository.GetTotalReceitasByPessoaAsync(pessoa.Id);
-        var despesas = await _transacaoRepository.GetTotalDespesasByPessoaAsync(pessoa.Id);
-        var saldoAtual = pessoa.Saldo + receitas - despesas;
 
-        if (pessoa.Idade >= 18 && transacaoDto.Tipo == CadastroGastos.Domain.Enums.TipoTransacao.Despesa && saldoAtual - transacaoDto.Valor < 0)
-        {
-            throw new InvalidOperationException("Saldo insuficiente. Apenas menores de idade (dependentes) podem ter saldo negativo.");
-        }
 
         var transacao = new Transacao
         {

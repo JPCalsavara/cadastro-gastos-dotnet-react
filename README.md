@@ -8,7 +8,6 @@ A aplicação permite cadastrar pessoas e registrar transações financeiras (re
 
 Como diferencial para este desafio, as seguintes melhorias foram implementadas além dos requisitos básicos:
 - **Clean Architecture & SOLID**: O back-end não mistura regras de negócio nos controllers. Foi criado um fluxo limpo com DTOs e validação de domínio em uma camada de Serviço dedicada.
-- **Prevenção Inteligente de Saldo Negativo**: Como bônus, implementou-se uma regra onde adultos (provedores) são bloqueados de criar despesas que negativem a conta, enquanto menores de idade (dependentes) podem ter saldo negativo, refletindo o custo que geram à residência.
 - **Tratamento Global de Erros**: Uso de *Global Exception Middleware* para capturar falhas de domínio e traduzi-las automaticamente para HTTP 400 (Bad Request), mantendo os controllers magros.
 - **Testes em 3 Camadas**: Implementação de testes Unitários, de Integração (com WebApplicationFactory e banco em memória) e **End-to-End (Cypress)** cobrindo o frontend real contra a API.
 

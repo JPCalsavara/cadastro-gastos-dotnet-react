@@ -31,33 +31,7 @@ public class TransacaoServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.CriarAsync(transacao));
     }
 
-    [Fact]
-    public async Task CriarAsync_SaldoInsuficiente_DeveLancarExcecao()
-    {
-        // Arrange
-        var mockTransacaoRepo = new Mock<ITransacaoRepository>();
-        var mockPessoaRepo = new Mock<IPessoaRepository>();
-        
-        var pessoa = new Pessoa { Id = 1, Idade = 25, Saldo = 100 };
 
-        mockPessoaRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(pessoa);
-        
-        // Simula que ele já gastou 50, então saldo atual é 100 + 0 - 50 = 50
-        mockTransacaoRepo.Setup(r => r.GetTotalReceitasByPessoaAsync(1)).ReturnsAsync(0);
-        mockTransacaoRepo.Setup(r => r.GetTotalDespesasByPessoaAsync(1)).ReturnsAsync(50);
-
-        var service = new TransacaoService(mockTransacaoRepo.Object, mockPessoaRepo.Object);
-        
-        var transacao = new CadastroGastos.Domain.DTOs.TransacaoCreateDto 
-        { 
-            PessoaId = 1, 
-            Valor = 100, // Ele só tem 50 de saldo livre, 100 deixaria negativo
-            Tipo = CadastroGastos.Domain.Enums.TipoTransacao.Despesa 
-        };
-
-        // Act & Assert
-        await Assert.ThrowsAsync<InvalidOperationException>(() => service.CriarAsync(transacao));
-    }
 
     [Fact]
     public async Task CriarAsync_DadosValidos_DeveRetornarTransacaoCriada()
