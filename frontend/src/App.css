@@ -220,7 +220,7 @@
 /* #region ESTILOS DO BALANÇO GERAL */
 .card-geral {
   border: 1px solid var(--border-color);
-  padding: 2.5rem;
+  padding: 1rem;
   border-radius: 12px;
   background-color: var(--input-bg);
   display: flex;
